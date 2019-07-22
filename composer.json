@@ -1,0 +1,15 @@
+{
+    "autoload": {
+        "psr-4": {
+            "app\\": "app"
+        }
+    },
+    "require": {
+        "vlucas/phpdotenv": "^3.4",
+        "twig/twig": "^2.11",
+        "doctrine/orm": "^2.6",
+        "doctrine/migrations": "2.0",
+        "pda/pheanstalk": "^4.0",
+        "ramsey/uuid-doctrine": "^1.5"
+    }
+}

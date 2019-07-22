@@ -1,0 +1,52 @@
+{% extends "layout.html.twig" %}
+
+{% block content %}
+    <form method="post">
+        <input type="hidden" name="csrf" value="{{ csrf }}" />
+    <table class="poll-table">
+        <thead>
+        <tr>
+            <th>Question:</th>
+            <th>
+                <input type="text" name="question" required value="Where do we go out tonight?" class="input-text" />
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="poll-table__plus">
+                <button type="button" class="btn btn--plus">
+                    +
+                </button>
+            </td>
+            <td> </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn--start">
+        Start
+    </button>
+    </form>
+    <script>
+      $(document).ready(function() {
+        var answerCount = 0
+
+        var addAnswer = function() {
+          answerCount++
+
+          $('' +
+            '<tr>\n' +
+            '    <th>Answer '+answerCount+':</th>\n' +
+            '    <td>\n' +
+            '        <input type="text" value="" required class="input-text" name="answers[]" />\n' +
+            '    </td>\n' +
+            '</tr>').insertBefore('.poll-table tr:last');
+
+        }
+
+        $('.btn--plus').click(addAnswer)
+        addAnswer()
+      })
+    </script>
+{% endblock %}

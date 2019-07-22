@@ -1,0 +1,88 @@
+{% extends "layout.html.twig" %}
+
+{% block content %}
+    <h1>
+        {{ poll.getQuestion() }}
+    </h1>
+
+    <div class="ex2-question">
+    {% if not poll.isVoted() %}
+        <form method="post">
+            <input type="hidden" name="csrf" value="{{ csrf }}" />
+            <div class="ex2-question__label">
+                Your name:
+            </div>
+            <div class="ex2-question__input">
+                <input type="text" name="name" class="input-text" required>
+            </div>
+            <div class="ex2-question__answer">
+                {% for answer in poll.getAnswers() %}
+                <label>
+                    <input type="radio" name="answer" value="{{ answer.getId() }}">
+                    {{ answer.getAnswer() }}
+                </label>
+                {% endfor %}
+            </div>
+            <div class="ex2-question__submit">
+                <input type="submit" class="btn" value="Submit">
+            </div>
+        </form>
+    {% else %}
+        <span>You have already voted</span>
+    {% endif %}
+    </div>
+    <h1>
+        Results
+    </h1>
+    <br>
+    <table class="ex2-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            {% for answer in poll.getAnswers() %}
+                <th>{{ answer.getAnswer() }}</th>
+            {% endfor %}
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script src="/js/poll.js"></script>
+    <script>
+        var PollComponent = (new Poll.Component())
+        PollComponent.connect({{ poll.getId() }})
+    </script>
+    <script>
+        $(document).ready(function () {
+            var _this = this
+            this.answersIds = []
+
+            this.addVote = function(vote) {
+                $('.ex2-table tbody').append(
+                    '<tr>' +
+                    '<td>' + vote.name + '</td>' +
+                    '<td></td>'.repeat(_this.answersIds.indexOf(parseInt(vote.answer_id))) +
+                    '<td>x</td>' +
+                    '<td></td>'.repeat(_this.answersIds.length - _this.answersIds.indexOf(parseInt(vote.answer_id)) - 1) +
+                    '</tr>'
+                )
+            }
+
+            {% for answer in poll.getAnswers() %}
+                this.answersIds.push({{ answer.getId() }})
+            {% endfor %}
+
+            this.votes = []
+            {% for vote in poll.getVotes() %}
+                this.addVote({
+                    'answer_id': '{{ vote.getAnswer().getId() }}',
+                    'name': '{{ vote.getName() }}'
+                })
+            {% endfor %}
+
+            $(window).on('POLL_MESSAGE', function (e) {
+                _this.addVote(e.detail)
+            })
+        })
+    </script>
+{% endblock %}
